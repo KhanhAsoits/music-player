@@ -1,12 +1,20 @@
 package com.example.kan_music;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.example.kan_music.utils.MusicHelper;
 
 
 public class MusicListFragment extends Fragment {
@@ -33,6 +41,10 @@ public class MusicListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_music_list,container,false);
+        MusicHelper loadMusicTask = new MusicHelper(getActivity());
+        loadMusicTask.execute();
         return  root;
     }
+
+
 }
