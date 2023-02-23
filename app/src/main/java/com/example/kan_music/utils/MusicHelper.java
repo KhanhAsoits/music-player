@@ -1,25 +1,15 @@
 package com.example.kan_music.utils;
 import static com.example.kan_music.utils.MusicLoadingUtils.getMp3Files;
-import static com.example.kan_music.utils.StringGenerator.TimeConverter;
-import static com.example.kan_music.utils.StringGenerator.UUID_G;
 
 import android.app.Activity;
-import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.kan_music.R;
-import com.example.kan_music.adapters.MusicListAdapter;
-import com.example.kan_music.controllers.MusicController;
+import java.util.UUID.*;
+import com.example.kan_music.MusicListFragment;
 import com.example.kan_music.entities.Song;
 
 import java.io.File;
@@ -29,14 +19,13 @@ import java.util.List;
 public class MusicHelper extends AsyncTask<Void,Void,List<Song>> {
     Activity contextParent;
     View fragment;
-    RecyclerView mRcySong;
-    MusicListAdapter mMusicAdapter;
+    MusicListFragment musicListFragment;
 
     public static String ROOT_PATH = Environment.getExternalStorageDirectory() + "";
 
-    public MusicHelper(Activity activity,View view){
+    public MusicHelper(Activity activity,MusicListFragment musicListFragment){
         this.contextParent = activity;
-        this.fragment = view;
+        this.musicListFragment  = musicListFragment;
     }
 
 
@@ -54,7 +43,7 @@ public class MusicHelper extends AsyncTask<Void,Void,List<Song>> {
             songsUris.forEach((s)->{
                 File file = new File(s);
                 Song song = new Song();
-                song.setId(UUID_G(10));
+                song.setId(java.util.UUID.randomUUID().toString());
                 song.setSong_name(file.getName());
                 song.setSong_uri(s);
                 songs.add(song);
@@ -62,21 +51,16 @@ public class MusicHelper extends AsyncTask<Void,Void,List<Song>> {
         }catch (Exception e){
             Log.d("Music get error:",e.getMessage());
         }
+        SystemClock.sleep(3000);
         return songs;
     }
+
 
 
     @Override
     protected void onPostExecute(List<Song> songs) {
         if (songs.size() > 0){
-            MusicController.songs = songs;
-
-            mRcySong = fragment.findViewById(R.id.rcy_song);
-            mMusicAdapter = new MusicListAdapter(contextParent);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(contextParent,RecyclerView.VERTICAL,false);
-            mRcySong.setLayoutManager(linearLayoutManager);
-            mMusicAdapter.setData(songs);
-            mRcySong.setAdapter(mMusicAdapter);
+            musicListFragment.loadMusic(contextParent,songs);
         }
         //song null
         Toast.makeText(contextParent, "Loading music finish", Toast.LENGTH_SHORT).show();

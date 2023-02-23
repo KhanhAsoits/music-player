@@ -4,17 +4,24 @@ import static com.example.kan_music.utils.PermissionHelper.onProgressPermission;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.kan_music.controllers.MusicController;
+import com.example.kan_music.models.MusicViewModel;
+
 public class MainActivity extends AppCompatActivity {
+    public static MusicViewModel musicViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        musicViewModel = new ViewModelProvider(this).get(MusicViewModel.class);
+        musicViewModel.setMusicContext(this);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)

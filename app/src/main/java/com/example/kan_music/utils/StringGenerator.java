@@ -7,7 +7,7 @@ public class StringGenerator {
         StringBuilder strb = new StringBuilder();
         String []chars = {"1","2","3","4","5","6","7","8","9","0","A","a","b","B","c","C","d","D","e","E","f","F","g","G" +
                 "h","H","i","I","k","K","m","M","n","N","x","X","Y","y","z","Z","o","O","!","@","#","$","%","^","&","*","-","_"};
-        for (int i = 0 ; i < length ;i ++){
+        for (int i = 0 ; i < length - 1 ;i ++){
             int randN = Integer.valueOf((int) Math.round(Math.random() * (chars.length - 1) + 1));
             strb.append(chars[randN]);
         }

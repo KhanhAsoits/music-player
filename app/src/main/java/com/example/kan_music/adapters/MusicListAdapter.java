@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.kan_music.MainActivity;
 import com.example.kan_music.R;
 import com.example.kan_music.controllers.MusicController;
 import com.example.kan_music.entities.Song;
@@ -36,7 +37,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     }
     public MusicListAdapter(Context context){
         this.mContext = context;
-        musicController = new MusicController(context);
+        musicController = MainActivity.musicViewModel.get();
     }
 
     public void setData(List<Song> songs){

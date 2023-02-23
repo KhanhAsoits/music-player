@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MusicController {
-    public static List<Song> songs = new ArrayList<>();
+    public List<Song> songs = new ArrayList<>();
 
     private int mCurrentIndex;
     private String mCurrentId;
@@ -33,6 +33,19 @@ public class MusicController {
         mediaPlayer = new MediaPlayer();
         mCurrentId = "";
         isPause = false;
+    }
+    public MusicController(){
+        mCurrentIndex = -1;
+        isPrepare = false;
+        isStart = true;
+        isLast = false;
+        mediaPlayer = new MediaPlayer();
+        mCurrentId = "";
+        isPause = false;
+    }
+
+    public void setContext(Context context){
+        this.mContext = context;
     }
 
     public boolean isPrepare() {
@@ -61,8 +74,8 @@ public class MusicController {
 
     public void playAt(String songId,int pos){
         try{
+            Log.d("song length  : ",this.songs.size() + "");
             // check is pause
-
             if (pos == mCurrentIndex){
                 if (!isPause){
                     isPause = true;
@@ -140,5 +153,18 @@ public class MusicController {
 
     public void setPause(boolean pause) {
         isPause = pause;
+    }
+
+    public List<Song> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<Song> songs) {
+        this.songs = songs;
+    }
+//
+
+    public Context getmContext() {
+        return mContext;
     }
 }
