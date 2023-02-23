@@ -1,33 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginVertical="10dp"
-    app:cardCornerRadius="8dp">
-
-    <RelativeLayout
+    android:layout_marginHorizontal="10dp"
+    app:cardCornerRadius="4dp">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:paddingHorizontal="20dp">
-        <ImageButton
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:padding="4dp"
-            android:scaleType="fitXY"
-            android:layout_marginStart="250dp"
-            android:layout_toEndOf="@+id/txt_music_name"
-            android:background="@color/white"
-            android:src="@drawable/play"/>
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:gravity="center_vertical"
+        >
         <TextView
             android:id="@+id/txt_music_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:text="music name"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
-    </RelativeLayout>
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_weight="40" />
+        <ImageButton
+            android:layout_weight="1"
+            android:id="@+id/btn_control"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="4dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_play_btn"/>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

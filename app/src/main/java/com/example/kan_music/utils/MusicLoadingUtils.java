@@ -32,6 +32,28 @@ public  class MusicLoadingUtils {
         };
         return new Thread(mt);
     }
+    public static ArrayList<String> getMp3Files(Context context) {
+        ArrayList<String> mp3Files = new ArrayList<>();
+        String[] projection = {MediaStore.Audio.Media.DATA};
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                null,
+                null
+        );
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String path = cursor.getString(0);
+                if (path.endsWith(".mp3")) {
+                    mp3Files.add(path);
+                }
+            }
+            cursor.close();
+        }
+        return mp3Files;
+    }
 
     public static ArrayList<HashMap<String,String>> getPlayList(String rootPath) {
         ArrayList<HashMap<String,String>> fileList = new ArrayList<>();

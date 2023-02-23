@@ -2,13 +2,16 @@ package com.example.kan_music.entities;
 
 public class Song {
 
+    private String id;
     private String song_name;
+    private String song_uri;
     private long song_duration;
     private String sonG_duration_str;
 
-    public Song(String song_name, long song_duration, String sonG_duration_str) {
+    public Song(String song_name,String id,long song_duration, String sonG_duration_str) {
         this.song_name = song_name;
         this.song_duration = song_duration;
+        this.id = id;
         this.sonG_duration_str = sonG_duration_str;
     }
 
@@ -27,6 +30,14 @@ public class Song {
         return song_duration;
     }
 
+    public String getSong_uri() {
+        return song_uri;
+    }
+
+    public void setSong_uri(String song_uri) {
+        this.song_uri = song_uri;
+    }
+
     public void setSong_duration(long song_duration) {
         this.song_duration = song_duration;
     }
@@ -41,5 +52,13 @@ public class Song {
 
     public String convertSongDuration(){
         return  null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
