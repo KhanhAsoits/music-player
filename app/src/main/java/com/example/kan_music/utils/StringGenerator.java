@@ -1,8 +1,25 @@
 package com.example.kan_music.utils;
 
+import android.net.Uri;
 import android.util.Log;
 
+import java.io.File;
+
 public class StringGenerator {
+
+    public static String myUri(String uri){
+        try{
+            File file = new File(uri);
+            if (!file.exists()){
+                return "";
+            }
+            return file.getAbsolutePath();
+        }catch (Exception e){
+            Log.d("Exception : ",e.getMessage());
+        }
+        return "";
+    }
+
     public static String UUID_G(int length){
         StringBuilder strb = new StringBuilder();
         String []chars = {"1","2","3","4","5","6","7","8","9","0","A","a","b","B","c","C","d","D","e","E","f","F","g","G" +

@@ -1,5 +1,6 @@
 package com.example.kan_music.adapters;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
@@ -27,6 +28,11 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     List<Song> mListSong = new ArrayList<>();
     Context mContext;
     MusicController musicController;
+    private OnItemClickListener mItemCLickListener;
+
+    public void setOnItemCLickListener (OnItemClickListener listener){
+        this.mItemCLickListener = listener;
+    }
 
     @NonNull
     @Override
@@ -51,18 +57,8 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         if (song==null){
             return;
         }
-        if (musicController.getmCurrentIndex() == position){
-            holder.mImgBtnControl.setImageResource(musicController.isPause() ? R.drawable.ic_play_btn : R.drawable.ic_pause_btn);
-        }else {
-            holder.mImgBtnControl.setImageResource(R.drawable.ic_play_btn);
-        }
+        holder.bindView(position,song);
 
-        holder.mImgBtnControl.setOnClickListener((v)->{
-            musicController.playAt(song.getId(), position);
-            notifyDataSetChanged();
-        });
-
-        holder.mTxtSongName.setText(song.getSong_name().replace(".mp3",""));
     }
 
     @Override
@@ -77,12 +73,18 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         ImageButton mImgBtnControl;
         public MusicListViewHolder(@NonNull View itemView) {
             super(itemView);
-
             mTxtSongName = itemView.findViewById(R.id.txt_music_name);
             mImgBtnControl = itemView.findViewById(R.id.btn_control);
-            int backgroundColor = Color.parseColor("#80ffffff");
+
+            int backgroundColor = Color.parseColor("#20ffffff");
             itemView.setBackgroundColor(backgroundColor);
-            ((CardView) itemView).setRadius(4);
         }
+        public void bindView(int position,Song song){
+            mTxtSongName.setText(song.getSong_name().replace(".mp3",""));
+            // animated
+        }
+    }
+    public interface OnItemClickListener{
+        public void onClick(int pos);
     }
 }

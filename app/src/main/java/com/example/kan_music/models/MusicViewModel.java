@@ -13,11 +13,13 @@ public class MusicViewModel extends ViewModel {
     private MusicController musicController = new MusicController();
     public MusicViewModel(){
     }
+    public MusicController getMusicController(){return musicController;}
     public void setMusicContext(Context context){
         if (musicController.getmContext() == null){
             musicController.setContext(context);
         }
     }
+
 
     public void setSongs(List<Song> songs){
         musicController.setSongs(songs);

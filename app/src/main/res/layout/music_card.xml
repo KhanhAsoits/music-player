@@ -32,6 +32,6 @@
             android:padding="4dp"
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_play_btn"/>
+         />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

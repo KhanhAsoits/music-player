@@ -5,9 +5,12 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.kan_music.MusicListFragment;
 import com.example.kan_music.entities.Song;
+import com.example.kan_music.utils.StringGenerator;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 public class MusicController {
@@ -20,6 +23,7 @@ public class MusicController {
     private boolean isLast;
     private Context mContext;
     private boolean isPrepare;
+    MusicListFragment.UpdateListener updateListener;
 
     MediaPlayer mediaPlayer;
 
@@ -34,7 +38,8 @@ public class MusicController {
         mCurrentId = "";
         isPause = false;
     }
-    public MusicController(){
+
+    public MusicController() {
         mCurrentIndex = -1;
         isPrepare = false;
         isStart = true;
@@ -44,7 +49,83 @@ public class MusicController {
         isPause = false;
     }
 
-    public void setContext(Context context){
+    public void setUpdateListener(MusicListFragment.UpdateListener updateListener) {
+        this.updateListener = updateListener;
+    }
+
+    public void initSong() {
+        mCurrentIndex = mCurrentIndex >= 0 ? mCurrentIndex : 0;
+        if (mediaPlayer.getDuration() == 0 && mCurrentIndex == 0){
+            prepareMusic(true,false);
+            updateListener.onUpdate(false);
+        }
+    }
+
+    public boolean gI() {
+        return mediaPlayer != null;
+    }
+
+    public boolean isPlaying() {
+        if (gI()) {
+            return mediaPlayer.isPlaying();
+        }
+        return false;
+    }
+
+    public void reset() {
+        if (gI()) {
+            mediaPlayer.reset();
+        }
+    }
+
+    public void stop() {
+        if (gI()) {
+            mediaPlayer.stop();
+        }
+    }
+
+    public boolean gI_Listener(){
+        return updateListener!=null;
+    }
+    public boolean canPrev() {
+        if (gI()) {
+            return mCurrentIndex - 1 >= 0;
+        }
+        return false;
+    }
+
+    public boolean canNext(){
+        if (gI()){
+            return mCurrentIndex + 1 <= songs.size();
+        }
+        return false;
+    }
+
+    public boolean play() {
+        if (gI()) {
+            if (isPrepare){
+                mediaPlayer.start();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void pause() {
+        if (gI()) {
+            mediaPlayer.pause();
+        }
+    }
+
+    public void prepareMusic(boolean isReset,boolean isP) {
+        if (mCurrentIndex > songs.size()) {
+            return;
+        }
+        isPrepare  = false;
+        loadSource(songs.get(mCurrentIndex).getSong_uri(),isReset,isP);
+    }
+
+    public void setContext(Context context) {
         this.mContext = context;
     }
 
@@ -52,19 +133,30 @@ public class MusicController {
         return isPrepare;
     }
 
-    public void loadSource(String fileUri) {
+    public void loadSource(String fileUri,boolean isR,boolean isP) {
         try {
             if (this.mContext == null || mediaPlayer == null) {
-                Log.d("Context Null Error :","In loadSource method.");
+                Log.d("Context Null Error :", "In loadSource method.");
                 return;
+            }
+            //check file is exit
+            String st = StringGenerator.myUri(fileUri);
+            if (st.equals("")){
+                return;
+            }
+            //
+            if (isR){
+                mediaPlayer.reset();
             }
             Uri uri = Uri.parse(fileUri);
             mediaPlayer.setDataSource(mContext, uri);
             mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener((e)->{
-                if (e.getDuration() != -1){
+            mediaPlayer.setOnPreparedListener((e) -> {
+                if (e.getDuration() != -1) {
                     isPrepare = true;
-                    e.start();
+                    if (isP){
+                        e.start();
+                    }
                 }
             });
         } catch (Exception e) {
@@ -72,12 +164,16 @@ public class MusicController {
         }
     }
 
-    public void playAt(String songId,int pos){
-        try{
-            Log.d("song length  : ",this.songs.size() + "");
+    public void seekTo(int progress) {
+        mediaPlayer.seekTo(progress);
+    }
+
+    public void playAt(String songId, int pos) {
+        try {
+            Log.d("song length  : ", this.songs.size() + "");
             // check is pause
-            if (pos == mCurrentIndex){
-                if (!isPause){
+            if (pos == mCurrentIndex) {
+                if (!isPause) {
                     isPause = true;
                     mediaPlayer.pause();
                     return;
@@ -87,24 +183,24 @@ public class MusicController {
                 return;
             }
             //check playing other
-            if (this.mCurrentId != "" && mCurrentIndex != -1){
-                if (mediaPlayer.isPlaying()){
+            if (this.mCurrentId != "" && mCurrentIndex != -1) {
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
                 mediaPlayer.reset();
             }
 
             // update new source
-            if (pos > songs.size() || pos < 0){
+            if (pos > songs.size() || pos < 0) {
                 return;
             }
             isPrepare = false;
             isPause = false;
-            loadSource(songs.get(pos).getSong_uri());
+            loadSource(songs.get(pos).getSong_uri(),true,true);
             mCurrentIndex = pos;
-            mCurrentId  = songs.get(pos).getId();
-        }catch (Exception e){
-            Log.d("Error when play at new source.",e.getMessage());
+            mCurrentId = songs.get(pos).getId();
+        } catch (Exception e) {
+            Log.d("Error when play at new source.", e.getMessage());
         }
     }
 
@@ -166,5 +262,24 @@ public class MusicController {
 
     public Context getmContext() {
         return mContext;
+    }
+
+    public void playNext() {
+        if (gI()){
+            if (canNext()){
+                mCurrentIndex+=1;
+                prepareMusic(true,true);
+                updateListener.onUpdate(true);
+            }
+        }
+    }
+    public void playPrev(){
+        if (gI()){
+            if (canPrev()){
+                mCurrentIndex-=1;
+                prepareMusic(true,true);
+                updateListener.onUpdate(true);
+            }
+        }
     }
 }
