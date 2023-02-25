@@ -37,7 +37,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     @NonNull
     @Override
     public MusicListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.music_card,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.music_card_ui,parent,false);
         return new MusicListViewHolder(view);
 
     }
@@ -57,7 +57,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         if (song==null){
             return;
         }
-        holder.bindView(position,song);
+        holder.bindView(position,song,musicController);
 
     }
 
@@ -68,19 +68,23 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         return 0;
     }
 
-    public  class MusicListViewHolder extends RecyclerView.ViewHolder{
+    public static class MusicListViewHolder extends RecyclerView.ViewHolder{
         TextView mTxtSongName;
-        ImageButton mImgBtnControl;
+        TextView mTxtSongDuration;
+
         public MusicListViewHolder(@NonNull View itemView) {
             super(itemView);
-            mTxtSongName = itemView.findViewById(R.id.txt_music_name);
-            mImgBtnControl = itemView.findViewById(R.id.btn_control);
-
-            int backgroundColor = Color.parseColor("#20ffffff");
-            itemView.setBackgroundColor(backgroundColor);
+            mTxtSongName = itemView.findViewById(R.id.txt_music_title);
+            mTxtSongDuration = itemView.findViewById(R.id.txt_music_duration);
         }
-        public void bindView(int position,Song song){
+        public void bindView(int position,Song song,MusicController musicController){
             mTxtSongName.setText(song.getSong_name().replace(".mp3",""));
+            mTxtSongDuration.setText(song.getSonG_duration_str());
+            if (position == musicController.getmCurrentIndex()){
+                itemView.setBackgroundColor(Color.parseColor("#f5f5f5"));
+            }else {
+                itemView.setBackgroundColor(Color.parseColor("#ffffff"));
+            }
             // animated
         }
     }

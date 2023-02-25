@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.example.kan_music.MusicListFragment;
+import com.example.kan_music.MusicListFragmentUI;
 import com.example.kan_music.entities.Song;
 import com.example.kan_music.utils.StringGenerator;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class MusicController {
     public List<Song> songs = new ArrayList<>();
 
+    public  boolean isSeek = false;
     private int mCurrentIndex;
     private String mCurrentId;
     private boolean isStart;
@@ -23,7 +25,9 @@ public class MusicController {
     private boolean isLast;
     private Context mContext;
     private boolean isPrepare;
-    MusicListFragment.UpdateListener updateListener;
+    public boolean isLooped;
+    public boolean isAutoPlay;
+    MusicListFragmentUI.UpdateListener updateListener;
 
     MediaPlayer mediaPlayer;
 
@@ -43,13 +47,15 @@ public class MusicController {
         mCurrentIndex = -1;
         isPrepare = false;
         isStart = true;
+        isLooped = false;
+        isAutoPlay = false;
         isLast = false;
         mediaPlayer = new MediaPlayer();
         mCurrentId = "";
         isPause = false;
     }
 
-    public void setUpdateListener(MusicListFragment.UpdateListener updateListener) {
+    public void setUpdateListener(MusicListFragmentUI.UpdateListener updateListener) {
         this.updateListener = updateListener;
     }
 
@@ -96,7 +102,7 @@ public class MusicController {
 
     public boolean canNext(){
         if (gI()){
-            return mCurrentIndex + 1 <= songs.size();
+            return mCurrentIndex + 1 < songs.size();
         }
         return false;
     }
@@ -133,6 +139,9 @@ public class MusicController {
         return isPrepare;
     }
 
+    public void replay(){
+        mediaPlayer.start();
+    }
     public void loadSource(String fileUri,boolean isR,boolean isP) {
         try {
             if (this.mContext == null || mediaPlayer == null) {
@@ -151,10 +160,17 @@ public class MusicController {
             Uri uri = Uri.parse(fileUri);
             mediaPlayer.setDataSource(mContext, uri);
             mediaPlayer.prepareAsync();
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    updateListener.onFinish();
+                }
+            });
             mediaPlayer.setOnPreparedListener((e) -> {
                 if (e.getDuration() != -1) {
                     isPrepare = true;
                     if (isP){
+                        updateListener.onCallBack();
                         e.start();
                     }
                 }
@@ -164,8 +180,8 @@ public class MusicController {
         }
     }
 
-    public void seekTo(int progress) {
-        mediaPlayer.seekTo(progress);
+    public void seekTo(int progress,int fps) {
+        mediaPlayer.seekTo(progress * fps);
     }
 
     public void playAt(String songId, int pos) {
@@ -206,6 +222,7 @@ public class MusicController {
 
 
 //
+
 
     public int getmCurrentIndex() {
         return mCurrentIndex;
@@ -268,18 +285,30 @@ public class MusicController {
         if (gI()){
             if (canNext()){
                 mCurrentIndex+=1;
-                prepareMusic(true,true);
-                updateListener.onUpdate(true);
+            }else {
+                mCurrentIndex = 0;
             }
+            prepareMusic(true,true);
+            updateListener.onUpdate(true);
         }
     }
     public void playPrev(){
         if (gI()){
             if (canPrev()){
                 mCurrentIndex-=1;
-                prepareMusic(true,true);
-                updateListener.onUpdate(true);
+            }else {
+                mCurrentIndex = songs.size() - 1;
             }
+            prepareMusic(true,true);
+            updateListener.onUpdate(true);
         }
+    }
+
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
+    public void setMediaPlayer(MediaPlayer mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
     }
 }

@@ -67,14 +67,13 @@ public class MusicListFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_music_list, container, false);
         loadElements(root);
         initSong();
-
         return root;
     }
 
     public void initSong() {
         if (MainActivity.musicViewModel.getCount() == 0) {
-            MusicHelper musicHelper = new MusicHelper(getActivity(), this);
-            musicHelper.execute();
+//            MusicHelper musicHelper = new MusicHelper(getActivity(), this);
+//            musicHelper.execute();
         } else {
             loadMusic(getActivity(), MainActivity.musicViewModel.getSongs());
         }
@@ -147,19 +146,6 @@ public class MusicListFragment extends Fragment {
         });
     }
     public void setImbControl(){
-        mImbPrev.setEnabled(true);
-        mImbNext.setEnabled(true);
-        boolean canPrev = mMainMusicController.canPrev();
-        boolean canNext = mMainMusicController.canNext();
-        Log.d("can next",canNext ? "true" : "false");
-        Log.d("can prev",canPrev ? "true" : "false");
-
-        if (!canPrev){
-            mImbPrev.setEnabled(false);
-        }
-        if (!canNext){
-            mImbNext.setEnabled(false);
-        }
     }
 
 
@@ -178,7 +164,7 @@ public class MusicListFragment extends Fragment {
 
             // init music controller
             initListener();
-            mMainMusicController.setUpdateListener(updateViewListener);
+//            mMainMusicController.setUpdateListener(updateViewListener);
             initMusicPlayer();
             initSeekBar();
             onSeekBarListener();

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="EditTextStyle">
+        <item name="android:background">@drawable/shadow</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:outlineProvider">@null</item>
+        <item name="android:inputType">text</item>
+    </style>
+</resources>

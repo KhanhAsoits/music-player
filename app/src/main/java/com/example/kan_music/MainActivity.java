@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.fragment_container_view, MusicListFragment.class, null)
+                    .add(R.id.fragment_container_view, MusicListFragmentUI.class, null)
                     .commit();
         }
         // get permission

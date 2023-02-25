@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="match_parent"
+<LinearLayout
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_weight="20"
     xmlns:android="http://schemas.android.com/apk/res/android" >
-    <ImageView
-        android:id="@+id/my_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/image1"/>
     <LinearLayout
+        android:layout_weight="18"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:id="@+id/frm_list_music"
-        tools:context=".MusicListFragment">
+        tools:context=".MusicListFragment"
+        >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcy_song"
             android:layout_width="match_parent"
@@ -24,6 +23,7 @@
             />
     </LinearLayout>
     <LinearLayout
+        android:layout_weight="1"
         android:paddingVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -98,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="0dp"
+                android:thumbOffset="0dp"
                 android:layout_marginBottom="0dp"
                 android:max="100"
                 android:progress="20"
@@ -139,4 +140,4 @@
         </LinearLayout>
 
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>
