@@ -1,5 +1,7 @@
 package com.example.kan_music.entities;
 
+import android.graphics.Bitmap;
+
 public class Song {
 
     private String id;
@@ -7,8 +9,26 @@ public class Song {
     private String song_uri;
     private long song_duration;
     private String sonG_duration_str;
+    private String song_singer;
+    private Bitmap image;
 
-    public Song(String song_name,String id,long song_duration, String sonG_duration_str) {
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
+    public String getSong_singer() {
+        return song_singer;
+    }
+
+    public void setSong_singer(String song_singer) {
+        this.song_singer = song_singer;
+    }
+
+    public Song(String song_name, String id, long song_duration, String sonG_duration_str) {
         this.song_name = song_name;
         this.song_duration = song_duration;
         this.id = id;

@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -78,14 +79,24 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         TextView mTxtSongName;
         TextView mTxtSongDuration;
 
+        TextView mTxtArtistName;
+        ImageView imageView;
+
         public MusicListViewHolder(@NonNull View itemView) {
             super(itemView);
             mTxtSongName = itemView.findViewById(R.id.txt_music_title);
             mTxtSongDuration = itemView.findViewById(R.id.txt_music_duration);
+            mTxtArtistName  = itemView.findViewById(R.id.txt_music_artist);
+            imageView = itemView.findViewById(R.id.img_song_thumbnail);
         }
         public void bindView(int position,Song song,MusicController musicController,MusicListViewHolder holder,MusicListAdapter this_){
             mTxtSongName.setText(song.getSong_name().replace(".mp3",""));
             mTxtSongDuration.setText(song.getSonG_duration_str());
+            Log.d("image : ",song.getImage() == null ? "true" : "false");
+            mTxtArtistName.setText(song.getSong_singer());
+            if (song.getImage()!=null){
+                imageView.setImageBitmap(song.getImage());
+            }
             if (position == musicController.getmCurrentIndex()){
                 itemView.setBackgroundColor(Color.parseColor("#f5f5f5"));
             }else {

@@ -2,6 +2,8 @@ package com.example.kan_music.utils;
 import static com.example.kan_music.utils.MusicLoadingUtils.getMp3Files;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -42,20 +44,32 @@ public class MusicHelper extends AsyncTask<Void,Void,List<Song>> {
         List<Song> songs  = new ArrayList<>();
         try{
             List<String> songsUris = getMp3Files(contextParent);
+
+            MediaMetadataRetriever md = new MediaMetadataRetriever();
             songsUris.forEach((s)->{
-                File file = new File(s);
+                Bitmap art;
+                BitmapFactory.Options bfo = new BitmapFactory.Options();
+                md.setDataSource(s);
+                byte[] rawArt = md.getEmbeddedPicture();
+                art = BitmapFactory.decodeByteArray(rawArt,0,rawArt.length,bfo);
+//                File file = new File(s);
                 Song song = new Song();
+                song.setImage(art);
                 song.setId(java.util.UUID.randomUUID().toString());
-                song.setSong_name(file.getName());
+                md.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_IMAGE);
+                song.setSong_singer(md.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
+                song.setSong_name(md.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
                 song.setSong_uri(s);
                 Duration duration = getDuration(s);
                 song.setSong_duration(duration.getTime());
                 song.setSonG_duration_str(duration.getTimeStr());
                 songs.add(song);
             });
+            md.release();
         }catch (Exception e){
             Log.d("Music get error:",e.getMessage());
         }
+
         SystemClock.sleep(3000);
         return songs;
     }

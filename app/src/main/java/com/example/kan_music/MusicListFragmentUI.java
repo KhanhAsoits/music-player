@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,14 +35,16 @@ public class MusicListFragmentUI extends Fragment {
     ImageButton mImbControl;
     ImageButton mImbNext;
     ImageButton mImbPrev;
+    ImageView mImgSongThumbnail;
     TextView mTxtMusicName;
     UpdateListener updateListener;
     MusicController mMainMusicController;
     SeekBar skbDuration;
     View mLLControl;
-    int doubleClick = 0;
+//    int doubleClick = 0;
 
     MusicListAdapter mMusicAdapter;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,39 +53,24 @@ public class MusicListFragmentUI extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_music_list_ui,container,false);
+        View root = inflater.inflate(R.layout.fragment_music_list_ui, container, false);
         loadElement(root);
         initSong();
         return root;
     }
-    public void resetDoubleClick(){
-        Handler handler = new Handler();
-        new Runnable() {
-            @Override
-            public void run() {
-                if (!mMainMusicController.isLooped){
-                    doubleClick = 0;
-                }
-                handler.postDelayed(this,3000);
-            }
-        };
-    }
-    public void setLoop(){
+
+
+    public void setLoop() {
 //        resetDoubleClick();
         mLLControl.setOnTouchListener(new View.OnTouchListener() {
             // reset
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (doubleClick < 2){
-                    doubleClick++;
-                    Toast.makeText(getActivity(),"Click one more time to loop.",Toast.LENGTH_SHORT).show();
-                }else {
-                    mMainMusicController.isLooped = !mMainMusicController.isLooped;
-                    Toast.makeText(getActivity(),"Looped : " + mMainMusicController.isLooped,Toast.LENGTH_SHORT).show();
-                    doubleClick = 0;
-                    if (mMainMusicController.isLooped){
-                        mMainMusicController.replay();
-                    }
+                mMainMusicController.isLooped = !mMainMusicController.isLooped;
+                Toast.makeText(getActivity(), "Looped : " + mMainMusicController.isLooped, Toast.LENGTH_SHORT).show();
+//                doubleClick = 0;
+                if (mMainMusicController.isLooped) {
+                    mMainMusicController.replay();
                 }
                 return true;
             }
@@ -97,20 +85,22 @@ public class MusicListFragmentUI extends Fragment {
             loadMusic(getActivity(), MainActivity.musicViewModel.getSongs());
         }
     }
-    public void loadElement(View view){
+
+    public void loadElement(View view) {
         mMainMusicController = MainActivity.musicViewModel.getMusicController();
         mRcySong = view.findViewById(R.id.rcy_song_ui);
         mImbControl = view.findViewById(R.id.btn_control_light);
         mImbPrev = view.findViewById(R.id.btn_prev);
         mImbNext = view.findViewById(R.id.btn_next);
+        mImgSongThumbnail = view.findViewById(R.id.img_song_thumbnail_control);
         mLLControl = view.findViewById(R.id.ll_control);
         skbDuration = view.findViewById(R.id.skb_player);
         mTxtMusicName = view.findViewById(R.id.txt_music_control_title);
-        view.findViewById(R.id.skb_player).setPadding(0,0,0,0);
+        view.findViewById(R.id.skb_player).setPadding(0, 0, 0, 0);
     }
 
 
-    public void initListener(){
+    public void initListener() {
         updateListener = new UpdateListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -119,8 +109,12 @@ public class MusicListFragmentUI extends Fragment {
                 //reset seek bar
                 //
                 setOnClickBtnControl();
+                // set image
+
+                mImgSongThumbnail.setImageBitmap(mMainMusicController.getSongs().get(mMainMusicController.getmCurrentIndex()).getImage());
+
                 mMusicAdapter.notifyDataSetChanged();
-                mTxtMusicName.setText(mMainMusicController.getSongs().get(mMainMusicController.getmCurrentIndex()).getSong_name().replace(".mp3",""));
+                mTxtMusicName.setText(mMainMusicController.getSongs().get(mMainMusicController.getmCurrentIndex()).getSong_name().replace(".mp3", ""));
             }
 
             @Override
@@ -130,8 +124,8 @@ public class MusicListFragmentUI extends Fragment {
 
             @Override
             public void onFinish() {
-                if (!mMainMusicController.isAutoPlay){
-                    if (mMainMusicController.isLooped){
+                if (!mMainMusicController.isAutoPlay) {
+                    if (mMainMusicController.isLooped) {
                         mMainMusicController.replay();
                         return;
                     }
@@ -139,14 +133,15 @@ public class MusicListFragmentUI extends Fragment {
                     return;
                 }
                 // if auto play
-                if (mMainMusicController.getmCurrentIndex() >= 0){
+                if (mMainMusicController.getmCurrentIndex() >= 0) {
                     mMainMusicController.playNext();
                 }
             }
         };
     }
-    public void setOnClickBtnControl(){
-        mImbControl.setOnClickListener((v)->{
+
+    public void setOnClickBtnControl() {
+        mImbControl.setOnClickListener((v) -> {
             if (!mMainMusicController.isPlaying()) {
                 // update view
                 mMainMusicController.play();
@@ -157,21 +152,23 @@ public class MusicListFragmentUI extends Fragment {
             }
         });
 
-        mImbNext.setOnClickListener((v)->{
+        mImbNext.setOnClickListener((v) -> {
             mMainMusicController.playNext();
         });
-        mImbPrev.setOnClickListener((v)->{
+        mImbPrev.setOnClickListener((v) -> {
             mMainMusicController.playPrev();
         });
     }
-    public void updateIsPlaying(){
+
+    public void updateIsPlaying() {
         if (mMainMusicController.isPlaying()) {
             mImbControl.setImageResource(R.drawable.ic_pause_btn_light);
         } else {
             mImbControl.setImageResource(R.drawable.ic_next_btn);
         }
     }
-    public void loadMusic(Context contextParent, List<Song> songs){
+
+    public void loadMusic(Context contextParent, List<Song> songs) {
         MainActivity.musicViewModel.setSongs(songs);
         if (mRcySong != null) {
             mMusicAdapter = new MusicListAdapter(contextParent);
@@ -196,15 +193,16 @@ public class MusicListFragmentUI extends Fragment {
 
     private void initSeekBar() {
         //
-        if (mMainMusicController.gI()){
+        if (mMainMusicController.gI()) {
             int duration = mMainMusicController.getMediaPlayer().getDuration();
-            skbDuration.setMax(duration/1000);
+            skbDuration.setMax(duration / 1000);
             onSeekBarListener();
             skbDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                    Log.d("here","here");
-//                    mMainMusicController.seekTo(progress , 1000);
+                    if (b) {
+                        mMainMusicController.seekTo(progress, 1000);
+                    }
                 }
 
                 @Override
@@ -226,14 +224,14 @@ public class MusicListFragmentUI extends Fragment {
             @Override
             public void run() {
                 int fps = 1000;
-                if (mMainMusicController.isPlaying()){
+                if (mMainMusicController.isPlaying()) {
                     int duration = mMainMusicController.getMediaPlayer().getCurrentPosition() / fps;
-                    Log.d("duration : ",duration + "");
-                    Log.d("max : ",mMainMusicController.getMediaPlayer().getDuration() / fps + "");
+                    Log.d("duration : ", duration + "");
+                    Log.d("max : ", mMainMusicController.getMediaPlayer().getDuration() / fps + "");
                     skbDuration.setMax(mMainMusicController.getMediaPlayer().getDuration() / fps);
                     skbDuration.setProgress(duration);
                 }
-                handler.postDelayed(this,fps);
+                handler.postDelayed(this, fps);
             }
         });
     }
@@ -242,9 +240,11 @@ public class MusicListFragmentUI extends Fragment {
         mMainMusicController.initSong();
     }
 
-    public interface UpdateListener{
+    public interface UpdateListener {
         public void onUpdate(boolean isPlay);
+
         public void onCallBack();
+
         public void onFinish();
     }
 
