@@ -215,6 +215,7 @@ public class MusicController {
             loadSource(songs.get(pos).getSong_uri(),true,true);
             mCurrentIndex = pos;
             mCurrentId = songs.get(pos).getId();
+//            updateListener.onUpdate(true);
         } catch (Exception e) {
             Log.d("Error when play at new source.", e.getMessage());
         }

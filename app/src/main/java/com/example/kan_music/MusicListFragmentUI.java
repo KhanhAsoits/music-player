@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +38,8 @@ public class MusicListFragmentUI extends Fragment {
     UpdateListener updateListener;
     MusicController mMainMusicController;
     SeekBar skbDuration;
+    View mLLControl;
+    int doubleClick = 0;
 
     MusicListAdapter mMusicAdapter;
     @Override
@@ -50,6 +54,39 @@ public class MusicListFragmentUI extends Fragment {
         loadElement(root);
         initSong();
         return root;
+    }
+    public void resetDoubleClick(){
+        Handler handler = new Handler();
+        new Runnable() {
+            @Override
+            public void run() {
+                if (!mMainMusicController.isLooped){
+                    doubleClick = 0;
+                }
+                handler.postDelayed(this,3000);
+            }
+        };
+    }
+    public void setLoop(){
+//        resetDoubleClick();
+        mLLControl.setOnTouchListener(new View.OnTouchListener() {
+            // reset
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (doubleClick < 2){
+                    doubleClick++;
+                    Toast.makeText(getActivity(),"Click one more time to loop.",Toast.LENGTH_SHORT).show();
+                }else {
+                    mMainMusicController.isLooped = !mMainMusicController.isLooped;
+                    Toast.makeText(getActivity(),"Looped : " + mMainMusicController.isLooped,Toast.LENGTH_SHORT).show();
+                    doubleClick = 0;
+                    if (mMainMusicController.isLooped){
+                        mMainMusicController.replay();
+                    }
+                }
+                return true;
+            }
+        });
     }
 
     public void initSong() {
@@ -66,6 +103,7 @@ public class MusicListFragmentUI extends Fragment {
         mImbControl = view.findViewById(R.id.btn_control_light);
         mImbPrev = view.findViewById(R.id.btn_prev);
         mImbNext = view.findViewById(R.id.btn_next);
+        mLLControl = view.findViewById(R.id.ll_control);
         skbDuration = view.findViewById(R.id.skb_player);
         mTxtMusicName = view.findViewById(R.id.txt_music_control_title);
         view.findViewById(R.id.skb_player).setPadding(0,0,0,0);
@@ -148,8 +186,10 @@ public class MusicListFragmentUI extends Fragment {
             // init music controller
             initListener();
             mMainMusicController.setUpdateListener(updateListener);
+            mMusicAdapter.setUpdateListener(updateListener);
             initMusicPlayer();
             initSeekBar();
+            setLoop();
             updateListener.onUpdate(false);
         }
     }

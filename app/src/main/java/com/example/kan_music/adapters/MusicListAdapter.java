@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -15,6 +16,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.kan_music.MainActivity;
+import com.example.kan_music.MusicListFragmentUI;
 import com.example.kan_music.R;
 import com.example.kan_music.controllers.MusicController;
 import com.example.kan_music.entities.Song;
@@ -29,6 +31,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
     Context mContext;
     MusicController musicController;
     private OnItemClickListener mItemCLickListener;
+    MusicListFragmentUI.UpdateListener updateListener;
 
     public void setOnItemCLickListener (OnItemClickListener listener){
         this.mItemCLickListener = listener;
@@ -57,7 +60,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         if (song==null){
             return;
         }
-        holder.bindView(position,song,musicController);
+        holder.bindView(position,song,musicController,holder,this);
 
     }
 
@@ -68,6 +71,9 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         return 0;
     }
 
+    public void setUpdateListener(MusicListFragmentUI.UpdateListener updateListener){
+        this.updateListener = updateListener;
+    }
     public static class MusicListViewHolder extends RecyclerView.ViewHolder{
         TextView mTxtSongName;
         TextView mTxtSongDuration;
@@ -77,7 +83,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
             mTxtSongName = itemView.findViewById(R.id.txt_music_title);
             mTxtSongDuration = itemView.findViewById(R.id.txt_music_duration);
         }
-        public void bindView(int position,Song song,MusicController musicController){
+        public void bindView(int position,Song song,MusicController musicController,MusicListViewHolder holder,MusicListAdapter this_){
             mTxtSongName.setText(song.getSong_name().replace(".mp3",""));
             mTxtSongDuration.setText(song.getSonG_duration_str());
             if (position == musicController.getmCurrentIndex()){
@@ -85,6 +91,14 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
             }else {
                 itemView.setBackgroundColor(Color.parseColor("#ffffff"));
             }
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    musicController.playAt("",position);
+                    this_.notifyDataSetChanged();
+                    this_.updateListener.onUpdate(true);
+                }
+            });
             // animated
         }
     }
